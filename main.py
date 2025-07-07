@@ -24,11 +24,11 @@ if __name__ == '__main__':
     # df_products.to_csv('data/gas_scooter_search_result.csv', index=False)
 
     # Get product details
-    # product_ids = get_product_ids('data/gas_scooter_search_result.csv')
-    # records_product_details = asyncio.run(eapi.all_products(product_ids[0:10], 4))
-    # df_product_details = records_to_df(records_product_details)
-    # df_product_details.to_csv('data/gas_scooter_products.csv', index=False)
+    product_ids = get_product_ids('data/gas_scooter_search_result.csv')
+    records_product_details = asyncio.run(eapi.all_products(product_ids, 4))
+    df_product_details = records_to_df(records_product_details)
+    df_product_details.to_csv('data/gas_scooter_products.csv', index=False)
 
     # Convert to Shopify
-    df_shopify = transform_data('data/gas_scooter_search_result.csv', 'data/gas_scooter_products.csv')
-    df_shopify.to_csv('import_products.csv', index=False)
+    # df_shopify = transform_data('data/gas_scooter_search_result.csv', 'data/gas_scooter_products.csv')
+    # df_shopify.to_csv('import_products.csv', index=False)

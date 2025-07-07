@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 class EbayAPI():
     api_base_url: str = 'https://api.ebay.com'
     ebay_access_token: str = None
+    proxy_url: str = getenv('PROXY_URL')
 
     # Authentication
     def configure_consent_request(self):
@@ -32,7 +33,7 @@ class EbayAPI():
             'response_type': 'code',
             'scope': quote(scope)
         }
-        with Client(follow_redirects=True) as client:
+        with Client(proxy=self.proxy_url, follow_redirects=True) as client:
             response = client.get(endpoint, params=params)
 
         return response
@@ -54,7 +55,7 @@ class EbayAPI():
             "scope": "https://api.ebay.com/oauth/api_scope"
         }
 
-        with Client() as client:
+        with Client(proxy=self.proxy_url) as client:
             response = client.post(url, headers=headers, data=data)
 
         return response
@@ -75,7 +76,7 @@ class EbayAPI():
             'offset': offset
         }
 
-        with Client(headers=headers) as client:
+        with Client(proxy=self.proxy_url, headers=headers) as client:
             response = client.get(endpoint, params=params)
 
         logger.info(f'Fetching {(q, limit, offset)}...Completed!')
@@ -115,7 +116,7 @@ class EbayAPI():
         offsets = [i for i in range(0, results_counts, limit)]
 
         tasks = []
-        async with AsyncClient(headers=headers, timeout=120) as aclient:
+        async with AsyncClient(proxy=self.proxy_url, headers=headers, timeout=120) as aclient:
             for offset in offsets:
                 task = asyncio.create_task(self.asearch(aclient, q=q, sem_limit=sem_limit, limit=limit, offset=offset))
                 tasks.append(task)
@@ -182,10 +183,10 @@ if __name__ == "__main__":
     eapi.ebay_access_token = access_token
 
     # ========================  search items =============================
-    # response = eapi.search('drone', 3)
+    response = eapi.search('drone', 3)
 
     # ======================== get product =============================
-    response = eapi.product('v1|286067196927|588169254194')
+    # response = eapi.product('v1|286067196927|588169254194')
 
     # ======================== display =============================
     print(response)
